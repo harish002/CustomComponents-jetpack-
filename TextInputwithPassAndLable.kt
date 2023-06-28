@@ -255,3 +255,10 @@ fun isValidEmail(email:String): Boolean {
     val emailRegex = Regex(pattern = "^[A-Za-z]+[0-9]*@[A-Za-z]+\\.[A-Za-z]+\$")
     return emailRegex.matches(email)
 }
+
+
+
+
+//ADD THESE DEPENDENCY FOR ICONS
+//   implementation ("androidx.compose.material:material-icons-core:1.2.1")
+//   implementation ("androidx.compose.material:material-icons-extended:1.2.1")
