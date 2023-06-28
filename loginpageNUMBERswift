@@ -1,0 +1,222 @@
+import SwiftUI
+
+
+struct OtpScreen : View{
+
+    @State private var phoneNumber: String = ""
+
+    @State private var isShowingSheet = false
+
+    var onBack: (() -> Void)?
+
+    @EnvironmentObject var navigationStack : NavigationStack
+
+    var body: some View{
+
+        
+
+        GeometryReader{ geometry in
+
+            
+
+            VStack
+
+            {
+
+                NavigationBar(title: "Login", showBackButton: true, onBack: onBack)
+
+                    .frame(height: 60)
+
+                
+
+                
+
+                VStack
+
+                {
+
+                    
+
+                    Image("kaalaalogo")
+
+                        .resizable()
+
+                        .aspectRatio(contentMode: .fit)
+
+                        .frame(width: 100, height: 100)
+
+                        .frame(maxWidth: .infinity,alignment:.leading)
+
+                        .padding(.leading,20)
+
+                        .padding(.bottom,10)
+
+                    
+
+                    
+
+                    Text("Verification")
+
+                        .frame(maxWidth: .infinity,alignment:.leading)
+
+                        .font(.title.weight(.bold))
+
+                        .padding(.leading,40)
+
+                        .padding(.bottom,10)
+
+                    
+
+                    
+
+                    
+
+                    HStack{
+
+                        Text("Enter Mobile Number")
+
+                            .font(.headline)
+
+                            .padding(.horizontal, 40)
+
+                        
+
+                        Spacer()
+
+                    }
+
+                    
+
+                    TextField("Mobile Number", text: $phoneNumber)
+
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+
+                        .keyboardType(.numberPad)
+
+                        .padding(.horizontal,38 + geometry.safeAreaInsets.leading)
+
+                        .font(.system(size: 14))
+
+                    
+
+                    
+
+                    if(phoneNumber.count > 10){
+
+                        
+
+                        HStack
+
+                        {
+
+                            Text("Incorrect Mobile Number")
+
+                                .font(.caption)
+
+                                .foregroundColor(.red)
+
+                                .padding(.horizontal,40)
+
+                                .padding(.bottom,10)
+
+                            
+
+                            Spacer()
+
+                            
+
+                        }
+
+                        
+
+                    }
+
+                    else
+
+                    {
+
+                        Text("")
+
+                    }
+
+                    
+
+                    
+
+                    Button(action: {
+
+                        // Perform login or phone number submission logic
+
+                        submitPhoneNumber()
+
+                        navigationStack.navigateTo(
+
+                            OTPVerificationPage(onBack:{
+
+                                navigationStack.pop()
+
+                            })
+
+                        )
+
+                       
+
+                    }) {
+
+                        Text("Submit")
+
+                            .font(.headline)
+
+                            .foregroundColor(.white)
+
+                            .padding(.horizontal,100)
+
+                            .padding(.vertical,10)
+
+                            .background(Color.orange)
+
+                            .cornerRadius(10)
+
+                    }
+
+                    .padding()
+
+                    
+
+                }
+
+                .frame(maxHeight: .infinity,alignment:.bottomLeading)
+
+                
+
+            }
+
+           
+
+        }
+
+       
+
+        
+
+    }
+
+    private func submitPhoneNumber() {
+
+        // Add your logic for phone number submission
+
+        print("Submitting Phone Number: \(phoneNumber)")
+
+    }
+
+}
+
+
+struct OTPScreen_Previews: PreviewProvider {
+
+    static var previews: some View {
+
+       OtpScreen()
+
+    }
+
