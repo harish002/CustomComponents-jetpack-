@@ -228,4 +228,30 @@ fun TextInput(
 
 }
 
+fun String.isValidPinCode(): Boolean {
+    val pinCodeRegex = Regex("^[1-9][0-9]{5}$")
+    return matches(pinCodeRegex) && length ==6
+}
 
+fun isValidNumber(value: String): Boolean {
+    val maxDigits = 10
+    val numericPattern = "^[0-9]+$"
+    return try {
+        if (value.matches(numericPattern.toRegex())) {
+            val parsedNumber = value.toLong()
+            val digitCount = parsedNumber.toString().length
+            digitCount <= maxDigits
+        } else {
+            false
+        }
+    } catch (e: NumberFormatException) {
+        false
+    }
+}
+
+
+
+fun isValidEmail(email:String): Boolean {
+    val emailRegex = Regex(pattern = "^[A-Za-z]+[0-9]*@[A-Za-z]+\\.[A-Za-z]+\$")
+    return emailRegex.matches(email)
+}
