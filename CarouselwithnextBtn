@@ -1,0 +1,132 @@
+package Pages
+
+import NavGraph.Screens
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Button
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
+
+val carouselImages = listOf("car1", "car2", "car3", "car4") // Replace with your own image names
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun InfoScreen(navController: NavController) {
+    val currentIndex = rememberPagerState(initialPage = 0)
+
+    LaunchedEffect(currentIndex.currentPage) {
+        snapshotFlow { currentIndex.currentPage }
+            .distinctUntilChanged()
+//            .collect { page ->
+//                val isLastPage = page == carouselImages.lastIndex
+//
+//            }
+    }
+
+    val coroutineScope = rememberCoroutineScope()
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = "Information")
+
+        Box(
+            modifier = Modifier.weight(1f),
+            contentAlignment = Alignment.Center
+        ) {
+            HorizontalPager(
+                state = currentIndex,
+                modifier = Modifier.fillMaxSize(),
+                pageCount = carouselImages.size
+            ) { page ->
+                Image(
+                    painter = painterResource(id = getResourceId(carouselImages[page], "drawable")),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxSize(0.8f)
+                        .aspectRatio(1f)
+                        .padding(8.dp)
+                        .clip(CircleShape)
+                )
+            }
+        }
+
+        Row(
+            modifier = Modifier.padding(vertical = 10.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            for (index in carouselImages.indices) {
+                val color = if (index == currentIndex.currentPage) Color.Cyan else Color.Gray
+                Box(
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp)
+                        .size(10.dp)
+                        .clip(CircleShape)
+                        .background(color)
+                        .clickable {
+                            coroutineScope.launch {
+                                currentIndex.animateScrollToPage(index)
+                            }
+                        }
+                )
+            }
+        }
+
+        val isLastPage = currentIndex.currentPage == carouselImages.lastIndex
+        val buttonText = if (isLastPage) "Get Started" else "Next"
+
+        Button(
+            onClick = {
+                if (!isLastPage) {
+                    coroutineScope.launch {
+                        currentIndex.animateScrollToPage(currentIndex.currentPage + 1)
+                    }
+                }
+                else{
+                    navController.navigate(Screens.MainScreen.route)
+
+                }
+            },
+            modifier = Modifier.padding(top = 16.dp)
+        ) {
+            Text(
+                text = buttonText,
+                color = Color.White
+            )
+        }
+    }
+}
+
+@Composable
+fun getResourceId(name: String, type: String): Int {
+    val context = LocalContext.current
+    return context.resources.getIdentifier(name, type, context.packageName)
+}
