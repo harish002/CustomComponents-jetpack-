@@ -32,8 +32,53 @@ import java.security.Permissions
 private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
 
 @Composable
-fun LocationButton(){
+fun GeolocaitonBtn():String {
+    val context = LocalContext.current
+    val locationPermissionState = remember{ mutableStateOf(false) }
+    var locationText by remember { mutableStateOf("") }
 
+    Column(
+        modifier = Modifier.padding(10.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Button(
+            onClick = {
+                if (locationPermissionState.value) {
+                    getLocationNew(cont = context,
+                        onLocationReceived = { locationText = it })
+
+                } else {
+                    requestLocationPermission(context) { granted ->
+                        locationPermissionState.value = granted
+                        if (granted) {
+                            getLocationNew(cont = context,
+                                onLocationReceived = { locationText = it })
+
+                        } else {
+                            // Handle case when permission is not granted
+                            Toast.makeText(
+                                context,
+                                "Location permission not granted",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                }
+
+            },
+            modifier = Modifier
+                .padding(horizontal = 5.dp, vertical = 5.dp)
+                .fillMaxWidth()
+        ) {
+            Text("Get Location")
+        }
+        if(locationText!=null){
+            Text(locationText, modifier = Modifier.padding(start = 15.dp))
+        }
+
+    }
+    return locationText
 }
 
  fun requestLocationPermission(context: Context, onPermissionResult: (Boolean) -> Unit) {
